@@ -3,6 +3,7 @@ require('dotenv').config();
 const express     = require('express');
 const bodyParser  = require('body-parser');
 const cors        = require('cors');
+const helmet      = require('helmet');
 
 const apiRoutes         = require('./routes/api.js');
 const fccTestingRoutes  = require('./routes/fcctesting.js');
@@ -35,6 +36,16 @@ app.use(function(req, res, next) {
     .type('text')
     .send('Not Found');
 });
+
+// Apply Helmet to app
+app.use(helmet({
+  contentSecurityPolicy:{
+    directives:{
+      "script-src":["'self'"],
+      "style-src":["'self'"]
+    }
+  }
+}));
 
 //Start our server and tests!
 const listener = app.listen(process.env.PORT || 3000, function () {
