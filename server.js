@@ -12,6 +12,21 @@ const runner            = require('./test-runner');
 const app = express();
 
 app.use('/public', express.static(process.cwd() + '/public'));
+// Apply Helmet to app
+app.use(helmet({
+  frameguard: {         // configure
+    action: 'deny'
+  },
+  contentSecurityPolicy: {    // enable and configure
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc:["'self'"],
+      styleSrc: ["'self'"],
+    }
+  },
+  dnsPrefetchControl: false    
+}));
+
 
 app.use(cors({origin: '*'})); //For FCC testing purposes only
 
@@ -36,16 +51,6 @@ app.use(function(req, res, next) {
     .type('text')
     .send('Not Found');
 });
-
-// Apply Helmet to app
-app.use(helmet({
-  contentSecurityPolicy:{
-    directives:{
-      "script-src":["'self'"],
-      "style-src":["'self'"]
-    }
-  }
-}));
 
 //Start our server and tests!
 const listener = app.listen(process.env.PORT || 3000, function () {
